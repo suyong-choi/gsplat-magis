@@ -146,11 +146,12 @@ __global__ void get_tile_bin_edges(
         return;
     // save the indices where the tile_id changes
     int32_t cur_tile_idx = (int32_t)(isect_ids_sorted[idx] >> 32);
-    if (idx == 0 || idx == num_intersects - 1) {
-        if (idx == 0)
-            tile_bins[cur_tile_idx].x = 0;
-        if (idx == num_intersects - 1)
-            tile_bins[cur_tile_idx].y = num_intersects;
+    if (idx == 0) {
+        tile_bins[cur_tile_idx].x = 0;
+        return;
+    }
+    if (idx == num_intersects - 1) {
+        tile_bins[cur_tile_idx].y = num_intersects;
         return;
     }
     int32_t prev_tile_idx = (int32_t)(isect_ids_sorted[idx - 1] >> 32);
@@ -338,7 +339,8 @@ __global__ void rasterize_forward(
                 continue;
             }
 
-            const float next_T = T * (1.f - alpha);
+            //const float next_T = T * (1.f - alpha);
+            const float next_T = T; // modified by SYC
             if (next_T <= 1e-4f) { // this pixel is done
                 // we want to render the last gaussian that contributes and note
                 // that here idx > range.x so we don't underflow
